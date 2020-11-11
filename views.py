@@ -2,6 +2,7 @@ import flask
 
 import models as Todo
 
+
 def index():
     # As a list to test debug toolbar
     Todo.Todo.objects().delete()  # Removes
