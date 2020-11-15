@@ -6,6 +6,7 @@ from wtforms import (
     DecimalField,
     SelectField,
     FormField,
+    BooleanField,
 )
 
 
@@ -21,9 +22,13 @@ class MeasuredIngredient(FlaskForm):
 class CreateRecipe(FlaskForm):
     title = TextField("Title")
     shortdesc = TextField("Description")
+    cook_tim = IntegerField("Cooking Time (min)")
+    prep_time = IntegerField("Prep Time (min)")
     amount = DecimalField("Amount")
     unit = SelectField("Unit", choices=[("cup", "cup"), ("oz", "oz"), ("lbs", "lbs")])
+    ingredient = TextField("Ingredient")
     ingredient_list = TextField("Ingredient")
+    selected = BooleanField("Selected")
     create = SubmitField("Create")
     # ingredient = FormField(MeasuredIngredient)
 

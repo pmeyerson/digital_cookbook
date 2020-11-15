@@ -2,6 +2,8 @@ from flask import Flask, render_template, redirect
 from pymongo import MongoClient
 from bson import Decimal128
 from classes import *
+from six import iteritems
+from pprint import pprint as pp
 
 # from flask mongoengine tutorial
 
@@ -76,8 +78,31 @@ def updateRecipe(form):
 
 def CreateShoppingList(form):
     keys = form.keys.data
+    for key in keys.split(","):
+        query = {"id": int(key)}
+        new_values = {"$set": {"selected": True}}
+        db.tasks.update_one(query, new_values)
 
-    return redirect("/")
+    docs = db.tasks.find({"selected": True})
+    data = []
+    for item in docs:
+        data.append(item)
+    shopping_list = {}
+
+    for item in data:
+        for element in item["ingredient_list"]:
+            if element["ingredient"] not in shopping_list:
+                key = element["ingredient"]
+                value = element
+                shopping_list[key] = value
+            else:
+                key = element["ingredient"]
+
+                if element["unit"] == shopping_list[key]["unit"]:
+                    value = shopping_list[key]["amount"] + element["amount"]
+                    shopping_list[key]["amount"] = value
+
+    return redirect("/shopping")
 
 
 def resetRecipe(form):
@@ -87,13 +112,47 @@ def resetRecipe(form):
     return redirect("/")
 
 
+@app.route("/shopping/", methods=["GET", "POST"])
+def main_shopping_list():
+
+    gform = GetShoppingList(prefix="gform")
+
+    if gform.validate_on_submit() and gform.create.data:
+        return CreateShoppingList(gform)
+
+    docs = db.tasks.find({"selected": True})
+    shopping_list = {}
+    recipe_names = []
+
+    for item in docs:
+        recipe_names.append(item["title"])
+        for element in item["ingredient_list"]:
+            if element["ingredient"] not in shopping_list:
+                key = element["ingredient"]
+                value = element
+                shopping_list[key] = value
+            else:
+                key = element["ingredient"]
+
+                if element["unit"] == shopping_list[key]["unit"]:
+                    value = shopping_list[key]["amount"] + element["amount"]
+                    shopping_list[key]["amount"] = value
+
+    shopping_list = [value for key, value in iteritems(shopping_list)]
+    return render_template(
+        "shopping.html",
+        gform=gform,
+        shopping_list=shopping_list,
+        recipe_names=recipe_names,
+    )
+
+
 @app.route("/", methods=["GET", "POST"])
 def main():
     # create form
     cform = CreateRecipe(prefix="cform")
     dform = DeleteRecipe(prefix="dform")
     uform = MeasuredIngredient(prefix="uform")
-    gform = GetShoppingList(prefix="gform")
     reset = ResetRecipe(prefix="reset")
 
     # response
@@ -105,8 +164,6 @@ def main():
         return updateRecipe(uform)
     if reset.validate_on_submit() and reset.reset.data:
         return resetRecipe(reset)
-    if gform.validate_on_submit() and gform.create.data:
-        return CreateShoppingList(gform)
 
     # read all data
     docs = db.tasks.find()
@@ -115,13 +172,7 @@ def main():
         data.append(i)
 
     return render_template(
-        "home.html",
-        cform=cform,
-        dform=dform,
-        uform=uform,
-        gform=gform,
-        data=data,
-        reset=reset,
+        "home.html", cform=cform, dform=dform, uform=uform, data=data, reset=reset
     )
 
 

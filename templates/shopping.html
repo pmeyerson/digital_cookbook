@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>Simple Task Manager</title>
+    <style>
+        .flex-container {
+            display: flex;
+
+        flex-flow: row wrap;
+        align-items: stretch;
+
+        justify-content:space-around;
+        }
+        .head {
+            text-align: center;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="head">
+        <h1>SIMPLE Recipe MANAGER</h1>
+        <h2>using MongoDB</h2>
+    </div>
+    <div class="flex-container" >
+       <form method="POST">
+            {{ gform.hidden_tag() }}
+            <fieldlist>
+                <legend>Create List</legend>
+                {{ gform.keys.label }} <br>
+                {{ gform.keys }} <br><br>
+                {{ gform.create }} <br><br><br><br><br>
+            </fieldlist>
+        </form>
+    </form>
+    </div>
+    <br>
+    <a href="/">Back</a>
+    <br>
+    <b>Shopping List:</b><br><br>
+    {% for i in shopping_list %}
+        {{ i["ingredient"] }}: {{ i["amount"] }} {{ i["unit"] }} <br>
+    {% endfor %}
+  </body>
+</html>

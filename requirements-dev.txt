@@ -4,3 +4,4 @@ pytest
 pytest-cov
 pre-commit
 pylint
+coverage-badge

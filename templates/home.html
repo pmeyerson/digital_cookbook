@@ -4,7 +4,7 @@
     <style>
         .flex-container {
             display: flex;
-        
+
         flex-flow: row wrap;
         align-items: stretch;
 
@@ -31,17 +31,17 @@
                 {{ cform.shortdesc }}<br>
                 {{ cform.amount.label }}<br>
                 {{ cform.amount }} <br>
-                {{ cform.unit.label }} 
+                {{ cform.unit.label }}
                 {{ cform.unit }}<br>
-                {{ cform.ingredient_list.label }}<br>                                       
-                {{ cform.ingredient_list }}<br>                                       
+                {{ cform.ingredient_list.label }}<br>
+                {{ cform.ingredient_list }}<br><br>
                 {{ cform.create }}
             </fieldset>
         </form>
         <form  method="POST" >
             {{ uform.hidden_tag() }}
             <fieldset>
-                <legend>Update Description Recipe</legend>
+                <legend>Add Ingredients To Recipe</legend>
                 {{ uform.key.label }}<br>
                 {{ uform.key }}<br><br>
                 {{ uform.amount.label }}<br>
@@ -49,26 +49,28 @@
                 {{ uform.unit.label }}<br>
                 {{ uform.unit }}<br>
                 {{ uform.ingredient.label }}<br>
-                {{ uform.ingredient }}<br>
+                {{ uform.ingredient }}<br><br>
                 {{ uform.update }}
             </fieldset>
         </form>
-        <form method="POST">
-            {{ dform.hidden_tag() }}
-            <fieldset>
-                <legend>Delete Recipe</legend>
-                {{ dform.title.label }}<br>
-                {{ dform.title }}<br><br>
-                {{ dform.delete }}
-                <br><br><br><br><br><br><br><br>
-            </fieldset>
-        </form>
+    </form>
+    <form method="POST">
+        {{ dform.hidden_tag() }}
+        <fieldset>
+            <legend>Delete Recipe</legend>
+            {{ dform.title.label }}<br>
+            {{ dform.title }}<br><br>
+            {{ dform.delete }}
+            <br><br><br><br><br><br><br><br>
+        </fieldset>
+    </form>
         <form method="POST">
             {{ reset.hidden_tag() }}
             <b>Reset All Data: </b> {{ reset.reset }}
         </form>
     </div>
     <br>
+    <a href="/shopping/">Create Shopping List</a>
     <br>
     <b>Cookbook Entries:</b><br><br>
     {% for i in data %}
@@ -76,11 +78,6 @@
         Title = {{ i["title"] }}<br>
         Short Description = {{ i["shortdesc"] }} <br>
         Ingredient List = {{ i["ingredient_list"] }} <br>
-        <b>Ingredients</b>
-        {% for e in data["ingredient_list"] %}
-            Ingredient = {{e["ingredient"]}} <br>
-            Amount = {{ e["amount"] }} {{ e["unit"]}} <br>
-        {% endfor %}
         <br><br>
     {% endfor %}
   </body>
